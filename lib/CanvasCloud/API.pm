@@ -1,7 +1,9 @@
 package CanvasCloud::API;
+
+# ABSTRACT: Base Class for talking Canvas LMS API
+
 use Moose;
 use namespace::autoclean;
-
 use LWP::UserAgent;
 use Hash::Merge qw/merge/;
 use URI;
@@ -15,12 +17,26 @@ has token  => ( is => 'ro', required => 1 );
 
 has ua => ( is => 'ro', lazy => 1, default => sub { LWP::UserAgent->new; } );
 
+=method uri
+
+Base uri for Canvas LMS
+
+=cut
+
 sub uri {
-    my $self = shift; 
+    my $self = shift;
     my $rest = inner() || '';
     $rest = '/' if ( defined $rest && $rest && $rest !~ /^\// );
     return sprintf('%s://%s/api/v1', $self->scheme, $self->domain) . $rest;
 }
+
+=method request( $method, $uri )
+
+returns HTTP::Request;
+
+request creates a HTTP::Request->new( $method => $uri ) it then sets the 'Authorization' header
+
+=cut
 
 sub request {
     my ( $self, $method, $uri ) = @_;
@@ -28,6 +44,13 @@ sub request {
     $r->header( 'Authorization' => 'Bearer '.$self->token );
     return $r;
 }
+
+=method send( $request )
+
+Attempts to send request to Canvas recursively depending on return Link header.
+Finally returns a hashref data structure as response from Canvas.
+
+=cut
 
 sub send {
     my ( $self, $request ) = @_;
@@ -49,12 +72,18 @@ sub send {
     return $struct;
 }
 
+=method decode( 'jsonstring' );
+
+returns results from from_json on jsonstring
+
+=cut
+
 sub decode { from_json $_[1]; }
 
 sub _parse_link {
     my $link = shift;
     $link =~ s/\R//g;
-    my %struct =  map { $_ => '' } qw/current next prev first last/; 
+    my %struct =  map { $_ => '' } qw/current next prev first last/;
     for my $l ( split( /,/, $link ) ) {
         my ($url, $type) = split( /;/, $l );
         my $TYPE = 0;
@@ -74,6 +103,12 @@ sub _parse_link {
 
 ## Taken from HTTP::Request::Common
 
+=method encode_url( $content )
+
+encode structure to url
+
+=cut
+
 sub encode_url {
    my ( $self, $content ) = @_;
    my $url = URI->new('http:');
@@ -86,3 +121,33 @@ sub encode_url {
 __PACKAGE__->meta->make_immutable;
 
 1;
+
+__END__
+
+=pod
+
+=encoding UTF-8
+
+=head1 DESCRIPTION
+
+Base class to be inherited by CanvasCloud API modules.
+
+=attr domain
+
+I<required:> Domain for your Canvas LMS site.
+
+=attr token
+
+I<required:> Your Oauth2 string token
+
+=attr debug
+
+I<optional:> 1  or 0  : 0 is default
+
+=attr scheme
+
+I<optional:> http or https : https is default
+
+=attr ua
+
+LWP::UserAgent
