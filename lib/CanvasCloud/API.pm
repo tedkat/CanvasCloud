@@ -54,7 +54,7 @@ Finally returns a hashref data structure as response from Canvas.
 
 sub send {
     my ( $self, $request ) = @_;
-    $request->header( 'Content-Type' => 'application/x-www-form-urlencoded' ) if ( $request->method eq 'POST' );
+    $request->header( 'Content-Type' => 'application/x-www-form-urlencoded' ) if ( $request->method eq 'POST' && $request->content_type eq '' );
     warn join("\n", 'REQUEST:--->',$request->as_string, 'REQUEST:<----'), "\n" if ( $self->debug );
     my $resp = $self->ua->request( $request );
     warn join("\n", 'RESPONSE:--->',$resp->as_string, 'RESPONSE:<----'), "\n" if ( $self->debug );
