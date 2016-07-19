@@ -9,7 +9,7 @@ extends 'CanvasCloud::API::Account';
 
 =attr uri
 
-augments base uri to append '/reports'
+augments base uri to append '/terms'
 
 =cut
 
