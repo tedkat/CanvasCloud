@@ -7,8 +7,9 @@ use namespace::autoclean;
 use Module::Load;
 
 my %LOADER = (
-                 'CanvasCloud::API::Account::Report' => { small => 'reports', short => 'Account::Report', wanted => [qw/domain token account_id/] },
-                 'CanvasCloud::API::Account::Term'   => { small => 'terms',   short => 'Account::Term',   wanted => [qw/domain token account_id/] },
+                 'CanvasCloud::API::Account::Report'    => { small => 'reports',    short => 'Account::Report',    wanted => [qw/domain token account_id/] },
+                 'CanvasCloud::API::Account::Term'      => { small => 'terms',      short => 'Account::Term',      wanted => [qw/domain token account_id/] },
+                 'CanvasCloud::API::Account::SISImport' => { small => 'sisimports', short => 'Account::SISImport', wanted => [qw/domain token account_id/] },
              );
 
 =attr config
@@ -23,8 +24,9 @@ has config => ( is => 'rw', isa => 'HashRef', required => 1 );
 
 Factory method that creates Canvas::API object based on 'api type' passed.
 
-  'reports' or 'Account::Report' CanvasCloud::API::Account::Report
-  'terms'   or 'Account::Term'   CanvasCloud::API::Account::Term
+  'reports'    or 'Account::Report'    CanvasCloud::API::Account::Report
+  'terms'      or 'Account::Term'      CanvasCloud::API::Account::Term
+  'sisimports' or 'Account::SISImport' CanvasCloud::API::Account::SISImport
 
 =cut
 

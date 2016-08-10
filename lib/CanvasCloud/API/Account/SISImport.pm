@@ -42,7 +42,7 @@ get sendzip status as GET ->uri/$id.json
 
 =cut
 
-sub zipstatus {
+sub status {
     my $self = shift;
     my $id   = shift;
     return $self->send( $self->request( 'GET', $self->uri . '/' . $id . '.json' ) );
