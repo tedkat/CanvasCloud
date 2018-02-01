@@ -13,7 +13,7 @@ TODO: {
     local $TODO = 'Implement local test server';
 
     ok $api->sendzip( $FindBin::Bin .'/104-site-api-account-sisimport.t'),   'call sendzip on sisimport object';
-    ok $api->zipstatus(0), 'call zipstatus on sisimport object';
+    ok $api->status(1), 'call zipstatus on sisimport object';
 }
 
 done_testing();
