@@ -4,6 +4,7 @@ package CanvasCloud::API::Account::SISImport;
 
 use Moose;
 use namespace::autoclean;
+use IO::String;
 
 extends 'CanvasCloud::API::Account';
 
@@ -23,16 +24,24 @@ send zip data as POST ->uri
 
 sub sendzip {
     my $self = shift;
-    my $file = shift || die 'no file given!';
-    die sprintf( 'file {%s} does not exist!', $file ) unless ( -f $file );
-    my $m = '';
-    open( my $ZF, '<', $file ) or die sprintf( 'cannot open input file {%s} error {%s}', $file, $! );
-    binmode $ZF;
-    while (<$ZF>) { $m .= $_; }
-    close $ZF;
-    my $r = $self->request( 'POST', $self->uri . '.json?import_type==instructure_csv&extension=zip' );
+    my $file_or_hash = shift || die 'no data given!';
+    my $compressed;
+    if ( -f $file_or_hash ) {
+        open( my $ZF, '<', $file_or_hash ) or die sprintf( 'cannot open input file {%s} error {%s}', $file_or_hash, $! );
+        binmode $ZF;
+        while (<$ZF>) { $compressed .= $_; }
+        close $ZF;
+    }
+    elsif ( ref($file_or_hash) eq 'HASH' ) {
+        my $sh = IO::String->new($compressed);
+        $file_or_hash->{zip}->writeToFileHandle($sh);
+    }
+    else {
+        die sprintf( 'file {%s}{%%%s} does not exist or is not Archive::Zip object', $file_or_hash, ref($file_or_hash) );
+    }
+    my $r = $self->request( 'POST', $self->uri . '.json?import_type=instructure_csv&extension=zip' );
     $r->content_type( 'application/zip' );
-    $r->content($m);
+    $r->content($compressed);
     return $self->send( $r );
 }
 
@@ -44,7 +53,7 @@ get sendzip status as GET ->uri/$id.json
 
 sub status {
     my $self = shift;
-    my $id   = shift;
+    my $id   = shift || die 'id must be given!';
     return $self->send( $self->request( 'GET', $self->uri . '/' . $id . '.json' ) );
 }
 

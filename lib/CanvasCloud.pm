@@ -33,6 +33,7 @@ Factory method that creates Canvas::API object based on 'api type' passed.
 sub api {
     my $self = shift;
     my $type = shift;
+    my @extra = @_;
 
     for my $k ( keys %LOADER ) {
         if ( $type eq $LOADER{$k}{small} || $type eq $LOADER{$k}{short} ) {
@@ -46,7 +47,7 @@ sub api {
         for my $arg ( @{ $LOADER{$type}{wanted} } ) {
             $wanted{$arg} = $self->config->{$arg} if ( exists $self->config->{$arg} && defined $self->config->{$arg} );
         }
-        return $type->new( %wanted );
+        return $type->new( %wanted, @extra );
     }
     die 'Unable to create CanvasCloud->api(', $type, ") -- $type not found!\n";
 }
@@ -65,7 +66,7 @@ __END__
 
   use CanvasCloud;
 
-  my $canvas = CanavasCloud->new( config => { domain => 'yourdomain.instructure.com', token => 'stringSoupGoesHere', account_id => 'A } );
+  my $canvas = CanavasCloud->new( config => { domain => 'yourdomain.instructure.com', token => 'stringSoupGoesHere', account_id => 'A' } );
 
   ## To list Terms
 
