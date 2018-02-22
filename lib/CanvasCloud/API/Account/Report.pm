@@ -37,7 +37,7 @@ sub check {
     return $self->send( $self->request( 'GET', join( '/', $self->uri, $report, $report_id ) ) );
 }
 
-=method run( $report, { term_id => 1 } )
+=method run( $report, { 'parameters[enrollment_term_id]' => 1 } )
 
 return data object response from POST ->uri / $report
 
@@ -60,6 +60,30 @@ sub run {
     return $self->send( $r );
 }
 
+
+=method get( $report, { 'parameters[enrollment_term_id]' => 1 } )
+
+perform the self->run( ... ) && self->check( ... ) until report is finished returning the text.
+
+=cut
+
+sub get {
+    my ( $self, $report, $args ) = @_;
+
+    my $result = $self->run( $report, $args );
+    
+    while ( $result->{status} eq 'running' ) {
+        sleep 10; 
+        $result = $self->check( $report, $result->{id} );
+    }
+
+    if ( exists $result->{attachment} && exists $result->{attachment}{url} ) {
+        my $resp = $self->ua->get( $result->{attachment}{url} ); ## Download report without using class specific headers
+        die $resp->status_line unless ( $resp->is_success );
+        return $resp->decoded_content( charset => 'none' );
+    }
+    return undef; ## never should but nothing would be retured
+}
 
 __PACKAGE__->meta->make_immutable;
 
