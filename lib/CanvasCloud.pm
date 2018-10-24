@@ -10,6 +10,7 @@ my %LOADER = (
                  'CanvasCloud::API::Account::Report'    => { small => 'reports',    short => 'Account::Report'    },
                  'CanvasCloud::API::Account::Term'      => { small => 'terms',      short => 'Account::Term'      },
                  'CanvasCloud::API::Account::SISImport' => { small => 'sisimports', short => 'Account::SISImport' },
+                 'CanvasCloud::API::Account::Users'     => { small => 'a_users',    short => 'Account::Users'     },
              );
 
 =attr config
