@@ -72,7 +72,7 @@ sub get {
 
     my $result = $self->run( $report, $args );
     
-    while ( $result->{status} eq 'running' ) {
+    while ( $result->{status} =~ m/(running|created)/ ) {
         sleep 10; 
         $result = $self->check( $report, $result->{id} );
     }
