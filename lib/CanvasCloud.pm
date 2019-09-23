@@ -10,6 +10,7 @@ my %LOADER = (
                  'CanvasCloud::API::Account::Report'    => { small => 'reports',    short => 'Account::Report'    },
                  'CanvasCloud::API::Account::Term'      => { small => 'terms',      short => 'Account::Term'      },
                  'CanvasCloud::API::Account::SISImport' => { small => 'sisimports', short => 'Account::SISImport' },
+                 'CanvasCloud::API::Account::OutcomeImport' => { small => 'outcomeimport', short => 'Account::OutcomeImport' },
                  'CanvasCloud::API::Account::Users'     => { small => 'a_users',    short => 'Account::Users'     },
              );
 
@@ -28,6 +29,7 @@ Factory method that creates Canvas::API object based on 'api type' passed.
   'reports'    or 'Account::Report'    CanvasCloud::API::Account::Report
   'terms'      or 'Account::Term'      CanvasCloud::API::Account::Term
   'sisimports' or 'Account::SISImport' CanvasCloud::API::Account::SISImport
+  'outcomeimport' or 'Account::OutcomeImport' CanvasCloud::API::Account::OutcomeImport
 
 =cut
 
