@@ -72,9 +72,10 @@ sub get {
 
     my $result = $self->run( $report, $args );
     
-    while ( $result->{status} =~ m/(running|created)/ ) {
+    while ( $result->{status} =~ m/(running|created|compiling)/ ) {
         sleep 10; 
         $result = $self->check( $report, $result->{id} );
+        #warn $result->{status};
     }
 
     if ( exists $result->{attachment} && exists $result->{attachment}{url} ) {
@@ -82,6 +83,7 @@ sub get {
         die $resp->status_line unless ( $resp->is_success );
         return $resp->decoded_content( charset => 'none' );
     }
+    warn sprintf('Report->get ASSERT: id(%s) returned last status (%s)', $result->{id}, $result->{status} );
     return undef; ## never should but nothing would be retured
 }
 
