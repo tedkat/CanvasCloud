@@ -79,7 +79,17 @@ sub get {
     }
 
     if ( exists $result->{attachment} && exists $result->{attachment}{url} ) {
-        my $resp = $self->ua->get( $result->{attachment}{url} ); ## Download report without using class specific headers
+        my $resp;
+        my $attempts = 3;
+        while ( $attempts > 0 ) {
+           $resp = $self->ua->get( $result->{attachment}{url} ); ## Download report without using class specific headers
+           if ( $resp->is_success ) {
+               $attempts = 0;
+           } else {
+               sleep 20; ## sleep 20 seconds and try again
+               $attempts--;
+           }
+        }
         die $resp->status_line unless ( $resp->is_success );
         return $resp->decoded_content( charset => 'none' );
     }
